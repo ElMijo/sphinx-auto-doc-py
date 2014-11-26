@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from helpers.files import get_files, zip_dir, abspath,basename,move,pyment_files, backup_files,apply_patch
+from helpers.utilitarios import pyment_files, backup_files,apply_patch, sphinx_quickstart, add_packge, generate_api,crerate_api_folder,generate_html_doc,get_principal_package
 from pyment import PyComment
 from terminal_text_color import TextColor,AlertTextColor
-import os
+import os, sys
 
 proyecto = '../example-doc-project'
+package = get_principal_package(proyecto)
+#+'/trianglelib'
 
 tc = TextColor()
 
@@ -13,29 +15,22 @@ if backup_files(proyecto):
 
     archivos = pyment_files(proyecto)
 
-    tc.default_cyan("Creando documentación..")
+    print tc.default_cyan("Convirtiendo docstring en reStructuredText..")
 
     for archivo in archivos:
         c = PyComment(archivo['original'])
         c.proceed()
         c.diff_to_file(archivo['patch'])
-        apply_patch(archivo['patch'])
+        apply_patch(archivo)
 
-
-
-
-
-# archivos = pyment_files(proyecto)
-
-# zipname = './'+basename(proyecto)
-
-# zipfilename = zipname+'.zip'
-
-
-
-# if zip_dir(proyecto,zipname):
-#     if move(zipfilename,abspath(proyecto)+'/'+zipfilename):
-#         for archivo in archivos:
-#             c = PyComment(archivo['original'])
-#             c.proceed()
-#             c.diff_to_file(archivo['patch'])
+    print tc.default_cyan("Creando documentación..")
+    print ""
+    print tc.bold_yellow("Esto es una secuencia interactiva responda las preguntas segun la configuración que desee")
+    print ""  
+    sphinx_quickstart(proyecto)
+    print tc.default_cyan("Agregando el proyecto a la ayuda..")
+    add_package(proyecto)
+    print tc.bold_cyan("Generando la documentación del API...")
+    generate_api(proyecto,package)
+    print tc.bold_yellow("Generando la documentación HTML")
+    generate_html_doc(proyecto)
