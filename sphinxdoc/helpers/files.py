@@ -85,71 +85,71 @@ class FileDir(object):
 	    return lista_archivos
 
 
-class SphinxDocProjecto(FileDir):
-	"""docstring for SphinxDocProject"""
+# class SphinxDocProjecto(FileDir):
+# 	"""docstring for SphinxDocProject"""
 
-	def __init__(self, ruta_proyecto):
-		super(self.__class__, self).__init__(ruta_proyecto)
+# 	def __init__(self, ruta_proyecto):
+# 		super(self.__class__, self).__init__(ruta_proyecto)
 
-	@property
-	def excluir_archivos():
-		"""Devuel los patrones a excluir al momento de buscar un paquete"""
-		return ["*.tests", "*.tests.*", "tests.*", "tests"]
+# 	@property
+# 	def excluir_archivos():
+# 		"""Devuel los patrones a excluir al momento de buscar un paquete"""
+# 		return ["*.tests", "*.tests.*", "tests.*", "tests"]
 
-	@property
-	def __get_proyect_packages__():
-		"""Devuelve una lista de todos los paquetes y sub-paquetes dentro del proyecto"""
-		from setuptools import find_packages
-		return find_packages(where=self.abspath,exclude=self.excluir_archivos)
+# 	@property
+# 	def __get_proyect_packages__():
+# 		"""Devuelve una lista de todos los paquetes y sub-paquetes dentro del proyecto"""
+# 		from setuptools import find_packages
+# 		return find_packages(where=self.abspath,exclude=self.excluir_archivos)
 
-	@property
-	def __package_name__():
-		"""Devuelve el nombre del paquete principal del proyecto"""
-    	import re
-    	paquete = None
-    	patron = re.compile('[.]')
-    	for item in self.__get_proyect_packages__:
-        	if patron.search(item) is None:
-				paquete = item
-            	break
+# 	@property
+# 	def __package_name__():
+# 		"""Devuelve el nombre del paquete principal del proyecto"""
+#     	import re
+#     	paquete = None
+#     	patron = re.compile('[.]')
+#     	for item in self.__get_proyect_packages__:
+#         	if patron.search(item) is None:
+# 				paquete = item
+#             	break
 
-    	return paquete
+#     	return paquete
 
-	@property
-	def __package_path__():
-		"""Devuelve la ruta absoluta del paquete principal del proyecto"""
-		return os.path.join(self.abspath,self.__package_name__)
+# 	@property
+# 	def __package_path__():
+# 		"""Devuelve la ruta absoluta del paquete principal del proyecto"""
+# 		return os.path.join(self.abspath,self.__package_name__)
 
-	@property
-	def __doc_dir__():
-		return os.path.join(self.abspath,'docs')
+# 	@property
+# 	def __doc_dir__():
+# 		return os.path.join(self.abspath,'docs')
 
 
-	def respaldar():
-		"""Genera un archivo zip dentro del proyecto"""
-		import tmpdir, shutil
+# 	def respaldar():
+# 		"""Genera un archivo zip dentro del proyecto"""
+# 		import tmpdir, shutil
 
-		respaldo = False
-		directorio_tempotal = tempfile.mkdtemp()
+# 		respaldo = False
+# 		directorio_tempotal = tempfile.mkdtemp()
 
-		try:
+# 		try:
 
-			archivo_temporal = os.path.join(tmpdir, self.basename+'_sphinxdoc_backup')
-			archivo_zip = open(shutil.make_archive(archivo_temporal, 'zip', self.abspath), 'rb').read()
-			respaldo = True			
+# 			archivo_temporal = os.path.join(tmpdir, self.basename+'_sphinxdoc_backup')
+# 			archivo_zip = open(shutil.make_archive(archivo_temporal, 'zip', self.abspath), 'rb').read()
+# 			respaldo = True			
 
-		finally:
+# 		finally:
 
-			shutil.rmtree(directorio_tempotal)
+# 			shutil.rmtree(directorio_tempotal)
 
-		return respaldo
+# 		return respaldo
 
-	def generar_html_doc(ruta_origen):
-    	os.system("make -C %s html" % self.__doc_dir__)
+# 	def generar_html_doc(ruta_origen):
+#     	os.system("make -C %s html" % self.__doc_dir__)
 
-    def generar_api_doc():
-    """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
-    	comando = 'sphinx-apidoc -F -o %s %s' % (self.__doc_dir__,self.__package_path__)
-    	os.system(comando)
+#     def generar_api_doc():
+#     """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
+#     	comando = 'sphinx-apidoc -F -o %s %s' % (self.__doc_dir__,self.__package_path__)
+#     	os.system(comando)
 
 
