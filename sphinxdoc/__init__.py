@@ -27,3 +27,6 @@ def importar_config(configfile):
 		config = json.loads(json_data)
 	
 	return config
+
+def ejecutar_comando(comando,*arg):
+	os.system(comando.format(*arg))

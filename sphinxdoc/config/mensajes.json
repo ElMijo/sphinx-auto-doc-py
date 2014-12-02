@@ -1,7 +1,13 @@
 {
 	"ui":{
 		"msj001":"Se necesita la ruta del proyecto",
-		"msj002":"[{0}] No es una ruta valida de proyecto"
+		"msj002":"[{0}] No es una ruta valida de proyecto",
+		"msj003":"Fallo el respaldo. Verifique los permisos de lectura y escritura en:[{0}]",
+		"msj004":"Verificando la ruta del proyecto [{0}]...",
+		"msj005":"Creando el respaldo del proyecto...",
+		"msj006":"Convirtiendo docstring en reStructuredText..",
+		"msj007":"Creando documentación..",
+		"msj008":"Configurando la documentación.."
 	},
 	"error":[]
 }

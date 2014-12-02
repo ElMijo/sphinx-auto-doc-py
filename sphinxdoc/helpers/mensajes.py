@@ -10,7 +10,6 @@ class Mensajes(object):
         self.__error__ = mensajes["error"]
 
     def __compilar__(self,id_mensaje,*args):
-        print args
         return self.__ui__[id_mensaje].format(*args) if id_mensaje in self.__ui__ else None
 
 class Alerta(Mensajes):

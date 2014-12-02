@@ -72,7 +72,7 @@ class FileDir(object):
         """Valida si la ruta es un punto de montaje"""
         return os.path.ismount(self.__ruta_archivo__)
 
-    def get_files(ext='*'):
+    def get_files(self,ext='*'):
         """Esta función nos permite obtener los archivos de una determinada extención dentro de una ruta"""
         lista_archivos = []
 
@@ -83,6 +83,31 @@ class FileDir(object):
                         lista_archivos.append(os.path.join(raiz, archivo))
 
         return lista_archivos
+
+    def replace_line(self, linea, texto):
+
+        replace = False
+
+        try:
+            if self.isfile:
+                lineas = open(self.abspath, 'r').readlines()
+                lineas[linea] = texto
+                out = open(self.abspath, 'w')
+                out.writelines(lineas)
+                out.close()
+                replace = True
+
+        except:
+            pass
+        
+        return replace
+
+
+
+        
+        
+        
+        
 
 
 # class SphinxDocProjecto(FileDir):

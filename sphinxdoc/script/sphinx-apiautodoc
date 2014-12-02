@@ -32,13 +32,21 @@ def main():
         alert.warning("msj001")
     else:
         ruta_proyecto = args[0]
+        print ui.mensaje("msj004", [ruta_proyecto],color='cyan',estilo='bold')
         if os.path.isdir(ruta_proyecto):
             proyecto = SphinxDocProjecto(ruta_proyecto)
-
-            print proyecto.respaldar()
-
+            print ui.mensaje("msj005",color='cyan',estilo='bold')
+            if proyecto.respaldar():
+                print ui.mensaje("msj006",color='cyan',estilo='bold')
+                proyecto.generar_docstring_rst()
+                print ui.mensaje("msj007",color='cyan',estilo='bold')
+                proyecto.generar_api_doc()
+                print ui.mensaje("msj008",color='cyan',estilo='bold')
+                proyecto.configurar_documentacion()
+            else:
+                alert.warning("msj003",proyecto.abspath)
         else:
-            alert.error("msj002",ruta_proyecto)   
+            alert.error("msj002",proyecto.abspath)   
         # print ui.mensaje("msj001",color='red',estilo='bold',fondo='white')
         # print ui.mensaje("msj002","jerry",color='blue',estilo='bold',fondo='white')
         #sys.exit(alert.warning("msj001"))

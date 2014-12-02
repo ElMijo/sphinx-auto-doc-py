@@ -8,6 +8,8 @@
 #        
 from __future__ import unicode_literals
 from helpers.files import FileDir
+from pyment import PyComment
+from . import ejecutar_comando as cmd
 
 class SphinxDocProjecto(FileDir):
     """docstring for SphinxDocProject"""
@@ -42,12 +44,18 @@ class SphinxDocProjecto(FileDir):
     @property
     def __package_path__(self):
         """Devuelve la ruta absoluta del paquete principal del proyecto"""
+        import os
         return os.path.join(self.abspath,self.__package_name__)
 
     @property
     def __doc_dir__(self):
+        import os
         return os.path.join(self.abspath,'docs')
 
+    @property
+    def __doc_config__(self):
+        import os
+        return os.path.join(self.abspath,'docs','conf.py')
 
     def respaldar(self):
         """Genera un archivo zip dentro del proyecto"""
@@ -79,13 +87,28 @@ class SphinxDocProjecto(FileDir):
     def generar_html_doc(self,ruta_origen):
         os.system("make -C %s html" % self.__doc_dir__)
 
+    def generar_docstring_rst(self):
+        """Esta función permite estructurar una lista de archivos obtimos para utilizar los comandos de Pyment"""
+        for f in self.get_files('py'):
+            fpatch = f+".patch"
+            c = PyComment(f)
+            c.proceed()
+            c.diff_to_file(fpatch)
+            cmd("patch {0} {1}",f,fpatch)
+            cmd("rm {0}",fpatch)
+
     def generar_api_doc(self):
         """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
-        comando = 'sphinx-apidoc -F -o %s %s' % (self.__doc_dir__,self.__package_path__)
-        os.system(comando)
+        cmd("sphinx-apidoc -F -o {0} {1}",self.__doc_dir__,self.__package_path__)
 
+    def configurar_documentacion(self):
 
-
+        config = FileDir(self.__doc_config__)
+        texto = 'sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../"))\n\n'
+        config.replace_line(17,texto)
+        
+        # add_extensions(archivo)
+        # remove_epub_options(archivo)        
 
 
 

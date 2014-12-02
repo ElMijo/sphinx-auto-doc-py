@@ -125,8 +125,6 @@ def obtener_mensaje(id_mensaje):
 
 #     return principal_package
      
-     
-#####Inicio de los metodos pendientes#####     
 # def pyment_files(ruta_origen):
 #     """Esta función permite estructurar una lista de archivos obtimos para utilizar los comandos de Pyment"""
 #     files = []
@@ -134,30 +132,39 @@ def obtener_mensaje(id_mensaje):
 #         files.append(dict(original=f,patch=f+".patch"))
 
 #     return files
+#     
+#               
 
 # def apply_patch(archivo):
 #     """Esta función aplica los patch generados por Pymet"""
 #     os.system("patch "+archivo['original']+" "+archivo['patch'])
 #     os.system("rm "+archivo['patch'])
-
-# def replace_line(archivo, linea, texto):
-#     lines = open(archivo, 'r').readlines()
-#     lines[linea] = texto
-#     out = open(archivo, 'w')
-#     out.writelines(lines)
-#     out.close()
-
-# def remove_end_black_line(archivo):
-#     text = open(archivo).read().strip()
-#     open('copia.rst', "w").write(text)
-
-
+#     
+#
 # def add_package(ruta_origen):
 #     texto = 'sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../"))\n'
 #     archivo = ruta_origen+"/docs/conf.py"
 #     replace_line(archivo, 17, texto)
 #     add_extensions(archivo)
 #     remove_epub_options(archivo)
+# def replace_line(archivo, linea, texto):
+#     lines = open(archivo, 'r').readlines()
+#     lines[linea] = texto
+#     out = open(archivo, 'w')
+#     out.writelines(lines)
+#     out.close()
+#####Inicio de los metodos pendientes#####     
+
+
+
+
+
+# def remove_end_black_line(archivo):
+#     text = open(archivo).read().strip()
+#     open('copia.rst', "w").write(text)
+
+
+
 
 # def add_api_doc(ruta_origen): 
 #     archivo = ruta_origen+'/index.rst'
