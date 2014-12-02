@@ -102,6 +102,33 @@ class FileDir(object):
         
         return replace
 
+    def append_after_line():
+        pass
+
+# def add_extensions(archivo):
+#     from string import find
+#     lines = open(archivo,"r").readlines()
+#     ext = [
+#         "'sphinx.ext.autodoc',\n",
+#         "'sphinx.ext.doctest',\n",
+#         "'sphinx.ext.mathjax',\n",
+#         "'sphinx.ext.viewcode',\n"
+#     ]
+#     inx_init = 0
+#     inx_end = 0
+#     for inx,val in enumerate(lines):
+#         if  find(val,'extensions = [')>-1:
+#             inx_init = inx
+#             continue
+#         elif find(val,']') > -1:
+#             inx_end = inx
+#             break
+
+#     lines = lines[:inx_init+1]+ext+lines[inx_end:]
+#     out = open(archivo, 'w')
+#     out.writelines(lines)
+#     out.close()        
+
 
 
         
