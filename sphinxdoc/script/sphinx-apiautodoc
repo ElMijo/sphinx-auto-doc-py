@@ -5,7 +5,7 @@ import os, sys
 import optparse
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../'))
 from sphinxdoc.helpers.mensajes import Alerta, InterfazUsuario
-
+from sphinxdoc.sphinxdoc import SphinxDocProjecto
 alert = Alerta()
 ui = InterfazUsuario()
 # try:
@@ -16,7 +16,8 @@ ui = InterfazUsuario()
 #from ..helpers.utilitarios import obtener_mensaje
 
 def definir_argumentos():
-    parser = optparse.OptionParser(usage="""uso: %prog [opciones] <package path> [exclude paths, ...]""")
+    """Permite Definir las opciones del comando"""
+    parser = optparse.OptionParser(usage="""uso: %prog [opciones] <project path> [exclude paths, ...]""")
 
     return parser
 
@@ -29,7 +30,17 @@ def main():
 
     if not args:
         alert.warning("msj001")
-        print ui.mensaje("msj001")
+    else:
+        ruta_proyecto = args[0]
+        if os.path.isdir(ruta_proyecto):
+            proyecto = SphinxDocProjecto(ruta_proyecto)
+
+            print proyecto.respaldar()
+
+        else:
+            alert.error("msj002",ruta_proyecto)   
+        # print ui.mensaje("msj001",color='red',estilo='bold',fondo='white')
+        # print ui.mensaje("msj002","jerry",color='blue',estilo='bold',fondo='white')
         #sys.exit(alert.warning("msj001"))
 
         #argumentos.error(obtener_mensaje("msj001"))

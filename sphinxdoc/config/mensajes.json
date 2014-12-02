@@ -1,6 +1,7 @@
 {
 	"ui":{
-		"msj001":"Se necesita la ruta de proyecto"
+		"msj001":"Se necesita la ruta del proyecto",
+		"msj002":"[{0}] No es una ruta valida de proyecto"
 	},
 	"error":[]
 }

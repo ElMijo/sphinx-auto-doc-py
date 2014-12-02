@@ -5,9 +5,9 @@
 #     def __init__(self, arg):
 #         super(ClassName, self).__init__()
 #         self.arg = arg
-#         
+#        
+from __future__ import unicode_literals
 from helpers.files import FileDir
-from terminal_text_color import TextColor,AlertTextColor  
 
 class SphinxDocProjecto(FileDir):
     """docstring for SphinxDocProject"""
@@ -16,18 +16,18 @@ class SphinxDocProjecto(FileDir):
         super(self.__class__, self).__init__(ruta_proyecto)
 
     @property
-    def excluir_archivos():
+    def excluir_archivos(self):
         """Devuel los patrones a excluir al momento de buscar un paquete"""
         return ["*.tests", "*.tests.*", "tests.*", "tests"]
 
     @property
-    def __get_proyect_packages__():
+    def __get_proyect_packages__(self):
         """Devuelve una lista de todos los paquetes y sub-paquetes dentro del proyecto"""
         from setuptools import find_packages
         return find_packages(where=self.abspath,exclude=self.excluir_archivos)
 
     @property
-    def __package_name__():
+    def __package_name__(self):
         """Devuelve el nombre del paquete principal del proyecto"""
         import re
         paquete = None
@@ -40,39 +40,47 @@ class SphinxDocProjecto(FileDir):
         return paquete
 
     @property
-    def __package_path__():
+    def __package_path__(self):
         """Devuelve la ruta absoluta del paquete principal del proyecto"""
         return os.path.join(self.abspath,self.__package_name__)
 
     @property
-    def __doc_dir__():
+    def __doc_dir__(self):
         return os.path.join(self.abspath,'docs')
 
 
-    def respaldar():
+    def respaldar(self):
         """Genera un archivo zip dentro del proyecto"""
-        import tmpdir, shutil
+        import tempfile, shutil, os
 
         respaldo = False
         directorio_tempotal = tempfile.mkdtemp()
 
         try:
 
-            archivo_temporal = os.path.join(tmpdir, self.basename+'_sphinxdoc_backup')
-            archivo_zip = open(shutil.make_archive(archivo_temporal, 'zip', self.abspath), 'rb').read()
+            archivo_temporal = os.path.join(directorio_tempotal, self.basename+'_sphinxdoc_backup')
+            zip_temporal = shutil.make_archive(archivo_temporal, 'zip', self.abspath)
+            zip_proyecto = os.path.join(self.abspath,os.path.basename(zip_temporal))
+
+            open(zip_temporal, 'rb').read()
+
+            if os.path.exists(zip_proyecto):
+                os.remove(zip_proyecto)
+
+            shutil.move(zip_temporal,self.abspath)
             respaldo = True         
-
+        except:
+            pass
         finally:
-
             shutil.rmtree(directorio_tempotal)
 
         return respaldo
 
-    def generar_html_doc(ruta_origen):
+    def generar_html_doc(self,ruta_origen):
         os.system("make -C %s html" % self.__doc_dir__)
 
-    def generar_api_doc():
-    """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
+    def generar_api_doc(self):
+        """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
         comando = 'sphinx-apidoc -F -o %s %s' % (self.__doc_dir__,self.__package_path__)
         os.system(comando)
 
