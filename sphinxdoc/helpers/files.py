@@ -72,6 +72,16 @@ class FileDir(object):
         """Valida si la ruta es un punto de montaje"""
         return os.path.ismount(self.__ruta_archivo__)
 
+    @property
+    def content(self):
+        """Permite ontener el contenido de un archivo"""
+        return open(self.abspath, 'r').read()
+
+    @property
+    def content_lines(self):
+        """Permite ontener el contenido de un archivo"""
+        return open(self.abspath, 'r').readlines()
+
     def get_files(self,ext='*'):
         """Esta función nos permite obtener los archivos de una determinada extención dentro de una ruta"""
         lista_archivos = []
@@ -102,8 +112,22 @@ class FileDir(object):
         
         return replace
 
-    def append_after_line():
-        pass
+    def append_after_line(self,line,texto):
+        append = False
+
+        try:
+            if self.isfile:
+                lineas = open(self.abspath, 'r').readlines()
+                lineas[linea] = texto
+                out = open(self.abspath, 'w')
+                out.writelines(lineas)
+                out.close()
+                append = True
+
+        except:
+            pass
+        
+        return append
 
 # def add_extensions(archivo):
 #     from string import find
