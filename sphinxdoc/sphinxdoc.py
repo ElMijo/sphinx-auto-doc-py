@@ -7,11 +7,11 @@
 #         self.arg = arg
 #        
 from __future__ import unicode_literals
-from helpers.files import FileDir
+from helpers.files import File, Dir
 from pyment import PyComment
 from . import ejecutar_comando as cmd
 
-class SphinxDocProjecto(FileDir):
+class SphinxDocProjecto(Dir):
     """docstring for SphinxDocProject"""
 
     def __init__(self, ruta_proyecto):
@@ -103,7 +103,7 @@ class SphinxDocProjecto(FileDir):
 
     def configurar_documentacion(self):
 
-        config = FileDir(self.__doc_config__)
+        config = File(self.__doc_config__)
         texto = 'sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../"))\n\n'
         config.replace_line(17,texto)
         

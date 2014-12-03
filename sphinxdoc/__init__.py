@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 """Esta es una herramienta que permite autogenerardocumentación de python"""
 import os
+from helpers import *
 
 __name__ = "Sphinx-AutoDoc"
 __author__ = "Jerry Anselmi"
