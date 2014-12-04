@@ -93,6 +93,15 @@ class FileDir(object):
         """Valida si la ruta es un punto de montaje"""
         return os.path.ismount(self.__root_path__)
 
+    def remove(self):
+        if self.isdir:
+            shutil.rmtree(self.abspath)
+        else:
+            os.remove(self.abspath)
+
+        del self
+    
+
 
 class Dir(FileDir):
     """docstring for Dir"""
@@ -147,6 +156,22 @@ class File(FileDir):
 
         return content
 
+    def write_content(self,content):
+        """Permite escribir un nuevo contenido en el archivo"""
+        write = False
+
+        try:
+            if not self.isfilebinary:
+                archivo = open(self.abspath, 'w')
+                archivo.write(content)
+                archivo.close()
+                write = True
+
+        except:
+            pass
+
+        return write
+
     def write_content_lines(self,lines):
         """Permite escribir determinado contenido separado por lines dentro del archivo"""
         write = False
@@ -166,6 +191,21 @@ class File(FileDir):
 
         return write
 
+    def strip_end_lines(self):
+        """Permite eliminar los espacios en blanco que pueda contener el archivo al final del mismo"""
+        strip = False
+
+        try:
+            if not self.isfilebinary:
+                content = self.content.rstrip()
+                self.write_content(content)
+                strip = True
+
+        except:
+            pass
+
+        return strip        
+
     def replace_line(self, nline, cline):
         """Permite remplazar el contenido de una linea en el archivo"""
 
@@ -183,6 +223,30 @@ class File(FileDir):
         
         return replace
 
+    def serach_line_by_text(self,text,init = 0,result = 0):
+
+        search = []
+        text = text if isinstance(text,basestring) else None
+        result = result if isinstance(result,int) and result >= 0 else 0
+        init = init if isinstance(init,int) else 0
+
+        try:
+
+            if not self.isfilebinary and text:
+
+                lines = self.content_lines[init:]
+                for inx,val in enumerate(lines):
+                    if val and find(val,text)>-1:
+                        search.append(inx+init)
+
+                search = search if result == 0 else search[:result]
+                search = search[0] if result == 1 and len(search) else search
+
+        finally:
+            pass
+        
+        return search
+
     def append_lines_after_line(self,nline,clines=[]):
         """Permite agregar una o mas lines a un archivo despues de una posición de linea del archivo"""
         
@@ -193,36 +257,13 @@ class File(FileDir):
         try:
             if not self.isfilebinary:
                 lines = self.content_lines
-                lines = lines[:nline]+clines+lines[nline:]
+                lines = lines[:nline+1]+clines+lines[nline+1:]
                 append = self.write_content_lines(lines)
 
         except:
             pass
         
         return append
-
-    def serach_line_by_text(self,text,init = 0,result = 0):
-
-        search = []
-        text = text if isinstance(text,str) else None
-        result = result if isinstance(result,int) and result >= 0 else 0
-        init = init if isinstance(init,int) else 0
-
-        try:
-
-            if not self.isfilebinary and text:
-                lines = self.content_lines[init:]
-                for inx,val in enumerate(lines):
-                    if val and find(val,text)>-1:
-                        search.append(inx+init)
-
-                search = search if result == 0 else search[:result]
-                search = search[0] if result == 1 else search
-
-        finally:
-            pass
-        
-        return search
 
     def remove_line(self,nline):
 
@@ -240,7 +281,7 @@ class File(FileDir):
         
         return remove
 
-    def remove_lines_between(self,init,end):
+    def remove_lines_between(self,init,end = None):
         """Permite eliminar las lineas que estan entre la linea init y la linea end (no inclusive)"""
         remove = False
         init = init if isinstance(init,int) else None
@@ -260,105 +301,3 @@ class File(FileDir):
             pass
         
         return remove
-
- 
-# def add_extensions(archivo):
-#     from string import find
-#     lines = open(archivo,"r").readlines()
-#     ext = [
-#         "'sphinx.ext.autodoc',\n",
-#         "'sphinx.ext.doctest',\n",
-#         "'sphinx.ext.mathjax',\n",
-#         "'sphinx.ext.viewcode',\n"
-#     ]
-#     inx_init = 0
-#     inx_end = 0
-#     for inx,val in enumerate(lines):
-#         if  find(val,'extensions = [')>-1:
-#             inx_init = inx
-#             continue
-#         elif find(val,']') > -1:
-#             inx_end = inx
-#             break
-
-#     lines = lines[:inx_init+1]+ext+lines[inx_end:]
-#     out = open(archivo, 'w')
-#     out.writelines(lines)
-#     out.close()        
-
-
-
-        
-        
-        
-        
-
-
-# class SphinxDocProjecto(FileDir):
-#       """docstring for SphinxDocProject"""
-
-#   def __init__(self, ruta_proyecto):
-#       super(self.__class__, self).__init__(ruta_proyecto)
-
-#   @property
-#   def excluir_archivos(self):
-#       """Devuel los patrones a excluir al momento de buscar un paquete"""
-#       return ["*.tests", "*.tests.*", "tests.*", "tests"]
-
-#   @property
-#   def __get_proyect_packages__():
-#       """Devuelve una lista de todos los paquetes y sub-paquetes dentro del proyecto"""
-#       from setuptools import find_packages
-#       return find_packages(where=self.abspath,exclude=self.excluir_archivos)
-
-#   @property
-#   def __package_name__():
-#       """Devuelve el nombre del paquete principal del proyecto"""
-#       import re
-#       paquete = None
-#       patron = re.compile('[.]')
-#       for item in self.__get_proyect_packages__:
-#           if patron.search(item) is None:
-#               paquete = item
-#               break
-
-#       return paquete
-
-#   @property
-#   def __package_path__():
-#       """Devuelve la ruta absoluta del paquete principal del proyecto"""
-#       return os.path.join(self.abspath,self.__package_name__)
-
-#   @property
-#   def __doc_dir__():
-#       return os.path.join(self.abspath,'docs')
-
-
-#   def respaldar():
-#       """Genera un archivo zip dentro del proyecto"""
-#       import tmpdir, shutil
-
-#       respaldo = False
-#       directorio_tempotal = tempfile.mkdtemp()
-
-#       try:
-
-#           archivo_temporal = os.path.join(tmpdir, self.basename+'_sphinxdoc_backup')
-#           archivo_zip = open(shutil.make_archive(archivo_temporal, 'zip', self.abspath), 'rb').read()
-#           respaldo = True         
-
-#       finally:
-
-#           shutil.rmtree(directorio_tempotal)
-
-#       return respaldo
-
-#   def generar_html_doc(ruta_origen):
-#       os.system("make -C %s html" % self.__doc_dir__)
-
-#     def generar_api_doc():
-#     """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
-#       comando = 'sphinx-apidoc -F -o %s %s' % (self.__doc_dir__,self.__package_path__)
-#       os.system(comando)
-
-

@@ -7,7 +7,13 @@
 		"msj005":"Creando el respaldo del proyecto...",
 		"msj006":"Convirtiendo docstring en reStructuredText..",
 		"msj007":"Creando documentación..",
-		"msj008":"Configurando la documentación.."
+		"msj008":"Agregando el path del package {0} al archivo de configuración..",
+		"msj009":"Agregando los plugins..",
+		"msj010":"Eliminando opciones epub..",
+		"msj011":"Le gustaria utilizar sphinx_rtd_theme como su plantilla por defecto?",
+		"msj012":"Agregando los modulos rst...",
+		"msj013":"Generando documentación HTML...",
+		"msj014":"¿Le gustaria ver el resultado en su navegador?"
 	},
 	"error":[]
 }

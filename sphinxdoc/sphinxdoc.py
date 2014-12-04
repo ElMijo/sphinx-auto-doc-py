@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# class ClassName(object):
-#     """docstring for ClassName"""
-#     def __init__(self, arg):
-#         super(ClassName, self).__init__()
-#         self.arg = arg
-#        
 from __future__ import unicode_literals
 from helpers.files import File, Dir
 from pyment import PyComment
@@ -13,6 +7,13 @@ from . import ejecutar_comando as cmd
 
 class SphinxDocProjecto(Dir):
     """docstring for SphinxDocProject"""
+
+    __SPHINX_EXT__ = [
+        'sphinx.ext.autodoc',
+        'sphinx.ext.doctest',
+        'sphinx.ext.mathjax',
+        'sphinx.ext.viewcode'
+    ]
 
     def __init__(self, ruta_proyecto):
         super(self.__class__, self).__init__(ruta_proyecto)
@@ -53,9 +54,18 @@ class SphinxDocProjecto(Dir):
         return os.path.join(self.abspath,'docs')
 
     @property
-    def __doc_config__(self):
+    def __doc_config_path__(self):
         import os
         return os.path.join(self.abspath,'docs','conf.py')
+
+    @property
+    def __sphinx_ext_parse__(self):
+        return ["'"+item+"',\n" for item in self.__SPHINX_EXT__]
+
+    @property
+    def __index_build_html_doc__(self):
+        return os.path.join(self.abspath,'docs','_build','html','index.html')
+
 
     def respaldar(self):
         """Genera un archivo zip dentro del proyecto"""
@@ -84,9 +94,6 @@ class SphinxDocProjecto(Dir):
 
         return respaldo
 
-    def generar_html_doc(self,ruta_origen):
-        os.system("make -C %s html" % self.__doc_dir__)
-
     def generar_docstring_rst(self):
         """Esta función permite estructurar una lista de archivos obtimos para utilizar los comandos de Pyment"""
         for f in self.get_files('py'):
@@ -100,18 +107,79 @@ class SphinxDocProjecto(Dir):
     def generar_api_doc(self):
         """Esta función ejecuta el comando sphinx-apidoc de Sphinx para crear la documentación del API"""
         cmd("sphinx-apidoc -F -o {0} {1}",self.__doc_dir__,self.__package_path__)
+        self.__doc_config_file__ = File(self.__doc_config_path__)
 
-    def configurar_documentacion(self):
 
-        config = File(self.__doc_config__)
-        texto = 'sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../"))\n\n'
-        config.replace_line(17,texto)
+    def agregar_package_path_to_conf_doc(self):
+        """Agrega la ruta del package al archivo de configuración"""
+        agregar = False
+
+        if self.__doc_config_file__.isfile:
+            line = 'sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../"))\n\n'
+            nline = self.__doc_config_file__.serach_line_by_text('#sys.path.insert',result=1)
+            self.__doc_config_file__.replace_line(nline,line)
+
+        return agregar
+
+    def agregar_plugins_to_conf_doc(self):
+        """Agrega los plugins por defecto a la configuración de la ayuda"""
+        agregar = False
+        init = self.__doc_config_file__.serach_line_by_text('extensions = [',result=1)
+        end = self.__doc_config_file__.serach_line_by_text(']',init=init,result=1)
+        if self.__doc_config_file__.remove_lines_between(init,end):
+            agregar = self.__doc_config_file__.append_lines_after_line(init,self.__sphinx_ext_parse__)
         
-        # add_extensions(archivo)
-        # remove_epub_options(archivo)        
+        return agregar
+
+    def eliminar_epub_to_config_doc(self):
+        """Elimina la configuración epub que genera por defecto el comando sphinx-apidoc"""
+        init = self.__doc_config_file__.serach_line_by_text('# -- Options for Epub output',result=1)
+        return self.__doc_config_file__.remove_lines_between(init)
+
+    def agregar_sphinx_rtd_theme(self):
+        """Agrega el tema sphinx_rtd_theme como tema por defecto"""
+        nline = self.__doc_config_file__.serach_line_by_text('import os',result=1)
+        self.__doc_config_file__.append_lines_after_line(nline,['import sphinx_rtd_theme\n'])
+        
+        nline = self.__doc_config_file__.serach_line_by_text('html_theme =',result=1)
+        self.__doc_config_file__.replace_line(nline,"html_theme = 'sphinx_rtd_theme'")
+        
+        nline = self.__doc_config_file__.serach_line_by_text('html_theme_path =',result=1)
+        self.__doc_config_file__.replace_line(nline,"html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]")
+    
+
+    def agregar_modules_rst(self):
+        """agrega la documentación rst por modulos al api"""
+        cmd("python ./script/generate_modules -d {0} -s rst -f {1}",self.__doc_dir__,self.__package_path__)
+
+        for item in self.get_files(ext='rst'):
+            rstfile = File(item)
+            if rstfile.basename == 'modules.rst':
+                rstfile.remove()
+            else:
+                rstfile.strip_end_lines()
+
+    def generar_html_doc(self):
+        """Genera la documentacion en formato html"""
+        cmd("make -C {0} html",self.__doc_dir__)
+
+    def open_html_doc(self):
+        """Permite ver la documentación desde su navegador"""
+        import webbrowser
+        webbrowser.open(self.__index_build_html_doc__)
 
 
+# def generate_api(ruta_origen,package):
+#     apifolder = abspath(ruta_origen+'/docs')
+#     packfolder = abspath(ruta_origen+'/'+package)
+#     #crerate_api_folder(apifolder)
+#     os.system("python ./script/generate_modules -d "+apifolder+" -s rst -f "+packfolder)
+#     add_api_doc(apifolder)
+#     for archivo in get_files(apifolder,ext='rst'):
+#         remove_end_black_line(archivo)
+        
 
+#eliana vivas 04248586669
 
 
 # class SphinxDoc(SphinxDocProjecto):
