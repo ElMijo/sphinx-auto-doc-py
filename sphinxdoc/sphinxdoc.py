@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+import os, re
 from helpers.files import File, Dir
 from pyment import PyComment
 from . import ejecutar_comando as cmd
@@ -32,7 +33,6 @@ class SphinxDocProjecto(Dir):
     @property
     def __package_name__(self):
         """Devuelve el nombre del paquete principal del proyecto"""
-        import re
         paquete = None
         patron = re.compile('[.]')
         for item in self.__get_proyect_packages__:
@@ -45,17 +45,14 @@ class SphinxDocProjecto(Dir):
     @property
     def __package_path__(self):
         """Devuelve la ruta absoluta del paquete principal del proyecto"""
-        import os
         return os.path.join(self.abspath,self.__package_name__)
 
     @property
     def __doc_dir__(self):
-        import os
         return os.path.join(self.abspath,'docs')
 
     @property
     def __doc_config_path__(self):
-        import os
         return os.path.join(self.abspath,'docs','conf.py')
 
     @property
@@ -167,54 +164,3 @@ class SphinxDocProjecto(Dir):
         """Permite ver la documentación desde su navegador"""
         import webbrowser
         webbrowser.open(self.__index_build_html_doc__)
-
-
-# def generate_api(ruta_origen,package):
-#     apifolder = abspath(ruta_origen+'/docs')
-#     packfolder = abspath(ruta_origen+'/'+package)
-#     #crerate_api_folder(apifolder)
-#     os.system("python ./script/generate_modules -d "+apifolder+" -s rst -f "+packfolder)
-#     add_api_doc(apifolder)
-#     for archivo in get_files(apifolder,ext='rst'):
-#         remove_end_black_line(archivo)
-        
-
-#eliana vivas 04248586669
-
-
-# class SphinxDoc(SphinxDocProjecto):
-#     def __init__(self, ruta_proyecto):
-#         self.tc = TextColor()
-#         self.atc = AlertTextColor()
-
-# from helpers.utilitarios import pyment_files, backup_files,apply_patch, sphinx_quickstart, generate_api,crerate_api_folder,generate_html_doc,get_principal_package,sphinx_apidoc,add_package
-# from pyment import PyComment
-# from terminal_text_color import TextColor,AlertTextColor
-# import os, sys
-
-# proyecto = '../example-doc-project'
-# package = get_principal_package(proyecto)
-# #+'/trianglelib'
-
-# tc = TextColor()
-
-# if backup_files(proyecto):
-
-#     archivos = pyment_files(proyecto)
-
-#     print tc.default_cyan("Convirtiendo docstring en reStructuredText..")
-
-#     for archivo in archivos:
-#         c = PyComment(archivo['original'])
-#         c.proceed()
-#         c.diff_to_file(archivo['patch'])
-#         apply_patch(archivo)
-
-#     print tc.default_cyan("Creando documentación..")
-#     sphinx_apidoc(proyecto,package)
-#     print tc.default_cyan("Agregando el proyecto a la ayuda..")
-#     add_package(proyecto)
-#     print tc.bold_cyan("Generando la documentación del API...")
-#     generate_api(proyecto,package)
-#     print tc.bold_yellow("Generando la documentación HTML")
-#     generate_html_doc(proyecto)

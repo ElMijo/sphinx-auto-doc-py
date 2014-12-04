@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys
-import optparse
+import os, sys,  optparse, inspect
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../'))
 from sphinxdoc.helpers.mensajes import Alerta, InterfazUsuario
 from sphinxdoc.helpers.utilitarios import raw_input_yes_no
 from sphinxdoc.sphinxdoc import SphinxDocProjecto
+from  types import FunctionType, ClassType
+
+
 alert = Alerta()
 ui = InterfazUsuario()
 # try:
@@ -22,6 +24,25 @@ def definir_argumentos():
 
     return parser
 
+def info(id_mensaje,data=[]):
+    print ui.mensaje(id_mensaje,data,color='cyan',estilo='bold')
+
+def run_sequence(handler, id_mensaje, param=[], param_mensaje=[]):
+
+    run = False
+
+    info(id_mensaje,param_mensaje)
+
+    if isinstance(handler, list) and hasattr(handler[0], '__class__') and hasattr(*handler):
+        run = getattr(handler[0],handler[1])(*param)
+
+    elif isinstance(handler, str) and type(globals()['algo']) == FunctionType:
+        run = globals()[handler](*param)
+
+    return run
+
+
+
 
 def main():
     """Función principal a ejecutarce al llamar el comando"""
@@ -33,36 +54,29 @@ def main():
         alert.warning("msj001")
     else:
         ruta_proyecto = args[0]
-        print ui.mensaje("msj004", [ruta_proyecto],color='cyan',estilo='bold')
+        info("msj004", [ruta_proyecto])
         if os.path.isdir(ruta_proyecto):
             proyecto = SphinxDocProjecto(ruta_proyecto)
-            print ui.mensaje("msj005",color='cyan',estilo='bold')
-            if proyecto.respaldar():
-                print ui.mensaje("msj006",color='cyan',estilo='bold')
-                proyecto.generar_docstring_rst()
-                print ui.mensaje("msj007",color='cyan',estilo='bold')
-                proyecto.generar_api_doc()
-                print ui.mensaje("msj008",[proyecto.__package_name__],color='cyan',estilo='bold')
-                proyecto.agregar_package_path_to_conf_doc()
-                print ui.mensaje("msj009",[proyecto.__package_name__],color='cyan',estilo='bold')
-                proyecto.agregar_plugins_to_conf_doc()
-                print ui.mensaje("msj010",[proyecto.__package_name__],color='cyan',estilo='bold')
-                proyecto.eliminar_epub_to_config_doc()
+            # info("msj005")
+            # if proyecto.respaldar():
 
-                if raw_input_yes_no(ui.mensaje("msj011",color='green',estilo='bold')):
-                    proyecto.agregar_sphinx_rtd_theme()
+            if run_sequence([proyecto,'respaldar'],"msj005"):
 
-                print ui.mensaje("msj012",color='cyan',estilo='bold')
-                proyecto.agregar_modules_rst()
-                print ui.mensaje("msj013",color='cyan',estilo='bold')
-                proyecto.generar_html_doc()
+                run_sequence([proyecto,'generar_docstring_rst'],"msj006")
+                run_sequence([proyecto,'generar_api_doc'],"msj007")
+                run_sequence([proyecto,'agregar_package_path_to_conf_doc'],"msj008",param_mensaje=[proyecto.__package_name__])
+                run_sequence([proyecto,'agregar_plugins_to_conf_doc'],"msj009",param_mensaje=[proyecto.__package_name__])
+                run_sequence([proyecto,'eliminar_epub_to_config_doc'],"msj010",param_mensaje=[proyecto.__package_name__])
 
-                # alert.success("Documentación creada Exitosamente!!!")
+                if raw_input_yes_no(ui.mensaje("msj011")):
+                    run_sequence([proyecto,'agregar_sphinx_rtd_theme'],"msj014")
 
-                #if raw_input_yes_no(ui.mensaje("msj014",color='green',estilo='bold')):
-                proyecto.open_html_doc()
-                # python -m SimpleHTTPServer 8000
+                
+                run_sequence([proyecto,'agregar_modules_rst'],"msj012")
+                run_sequence([proyecto,'generar_html_doc'],"msj013")
+                run_sequence([proyecto,'open_html_doc'],"msj015")
 
+                alert.success("msj016")
 
 
             else:

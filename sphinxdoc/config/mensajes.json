@@ -13,7 +13,9 @@
 		"msj011":"Le gustaria utilizar sphinx_rtd_theme como su plantilla por defecto?",
 		"msj012":"Agregando los modulos rst...",
 		"msj013":"Generando documentación HTML...",
-		"msj014":"¿Le gustaria ver el resultado en su navegador?"
+		"msj014":"Agregando a sphinx_rtd_theme como plantilla predeterminada",
+		"msj015":"Abriendo documentación en su navegador..",
+		"msj016":"Proceso de documentación finalizado con exito!!!"
 	},
 	"error":[]
 }

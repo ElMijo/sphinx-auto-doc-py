@@ -11,7 +11,8 @@ tc = TextColor()
 
 def raw_input_yes_no(question):
 
-    question  = '%s [y/n]: ' % question
+    #question  = '%s [y/n]: ' % question
+    question  = tc.bold_green('%s [y/n]: ' % question)
     errortext = tc.bold_yellow('por favor responda con \'y\' or \'n\'.\n') 
     while True:
         try:

@@ -43,7 +43,6 @@ class InterfazUsuario(Mensajes):
 
     def mensaje(self,id_mensaje,data=[],color='default',fondo='default',estilo='default'):
 
-        func = None
         if fondo == 'default' and color!='default':
             func = "%s_%s" % (estilo,color)
         elif fondo == 'default' and color=='default':
@@ -53,6 +52,12 @@ class InterfazUsuario(Mensajes):
         else:
             func = "%s_%s_%s" % (estilo,color,fondo)
 
-        func = func if hasattr(self.tc,func) else 'default'
+        func = func if func !='default' and hasattr(self.tc,func) else None
 
-        return getattr(self.tc,func)(self.__compilar__(id_mensaje,*data))
+        mensaje = self.__compilar__(id_mensaje,*data)
+
+        if func:
+            
+            mensaje = getattr(self.tc,func)(self.__compilar__(id_mensaje,*data))            
+
+        return mensaje
