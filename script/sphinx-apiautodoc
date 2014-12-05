@@ -57,8 +57,6 @@ def main():
         info("msj004", [ruta_proyecto])
         if os.path.isdir(ruta_proyecto):
             proyecto = SphinxDocProjecto(ruta_proyecto)
-            # info("msj005")
-            # if proyecto.respaldar():
 
             if run_sequence([proyecto,'respaldar'],"msj005"):
 
@@ -71,13 +69,11 @@ def main():
                 if raw_input_yes_no(ui.mensaje("msj011")):
                     run_sequence([proyecto,'agregar_sphinx_rtd_theme'],"msj014")
 
-                
                 run_sequence([proyecto,'agregar_modules_rst'],"msj012")
                 run_sequence([proyecto,'generar_html_doc'],"msj013")
                 run_sequence([proyecto,'open_html_doc'],"msj015")
 
                 alert.success("msj016")
-
 
             else:
                 alert.warning("msj003",proyecto.abspath)
